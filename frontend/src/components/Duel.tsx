@@ -89,7 +89,7 @@ export const Duel: React.FC = () => {
           </button>
         </div>
         <img
-          src={pair.album_a.cover_url || 'https://placehold.co/300x300/15131f/c4a7e7?text=Album'}
+          src={pair.album_a.cover_url || 'https://placehold.co/300x300/15131f/c4a7e7?text=AOTY+%E2%80%A2+No+Cover'}
           alt={pair.album_a.title}
           loading="lazy"
         />
@@ -122,7 +122,7 @@ export const Duel: React.FC = () => {
           </button>
         </div>
         <img
-          src={pair.album_b.cover_url || 'https://placehold.co/300x300/15131f/c4a7e7?text=Album'}
+          src={pair.album_b.cover_url || 'https://placehold.co/300x300/15131f/c4a7e7?text=AOTY+%E2%80%A2+No+Cover'}
           alt={pair.album_b.title}
           loading="lazy"
         />

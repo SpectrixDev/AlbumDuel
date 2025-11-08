@@ -8,12 +8,17 @@ import { SpotifyCallback } from './components/SpotifyCallback';
 import { SpotifyImportTop } from './components/SpotifyImportTop';
 import { AOTYImport } from './components/AOTYImport';
 import { AuthStatus } from './components/AuthStatus';
-import { Swords, BarChart2, Activity, Download } from 'lucide-react';
+import { LastfmConnect } from './components/LastfmConnect';
+import { Sources } from './components/Sources';
+import { Swords, BarChart2, Activity } from 'lucide-react';
 
 export const App: React.FC = () => (
   <div className="app">
     <header className="header">
-      <h1>⬢ AlbumDuel</h1>
+      <h1>
+        <img src="/AlbumDuel/favicon.svg" alt="AlbumDuel" style={{ width: '24px', height: '24px', marginRight: '8px', verticalAlign: 'middle' }} />
+        AlbumDuel
+      </h1>
       <nav>
         <Link to="/">
           <Swords size={16} />
@@ -27,8 +32,9 @@ export const App: React.FC = () => (
           <Activity size={16} />
           <span>Stats</span>
         </Link>
-        <ConnectSpotify />
-        <AuthStatus />
+        <Link to="/sources">
+          <span>Sources</span>
+        </Link>
       </nav>
     </header>
     <main>
@@ -36,11 +42,9 @@ export const App: React.FC = () => (
         <Route path="/" element={<Duel />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/stats" element={<Stats />} />
-
+        <Route path="/sources" element={<Sources />} />
         <Route path="/auth/spotify/callback" element={<SpotifyCallback />} />
       </Routes>
-      <SpotifyImportTop />
-      <AOTYImport />
     </main>
   </div>
 );

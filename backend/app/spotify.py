@@ -184,6 +184,7 @@ async def _upsert_album_from_spotify(db: AsyncSession, user: User, item: Dict[st
             year=year,
             cover_url=cover_url,
             source="spotify",
+            cover_provider="spotify",
         )
         db.add(existing)
         await db.flush()

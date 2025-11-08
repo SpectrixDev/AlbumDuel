@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Album, User, UserAlbum
+from .artwork_resolver import resolve_album_cover
 
 try:
     from albumoftheyearapi.user import UserMethods  # type: ignore
@@ -56,7 +57,14 @@ async def import_aoty_user_albums(
             continue
 
         if not album:
-            cover_url = item.get("album_artwork_link") or item.get("cover") or item.get("image")
+            cover_url = (
+                item.get("album_artwork_link")
+                or item.get("cover_url")
+                or item.get("cover")
+                or item.get("image")
+            )
+            if cover_url and cover_url.startswith("//"):
+                cover_url = "https:" + cover_url
 
             album = Album(
                 title=title,
@@ -64,9 +72,21 @@ async def import_aoty_user_albums(
                 year=year,
                 cover_url=cover_url,
                 source="aoty",
+                cover_provider="aoty" if cover_url else None,
             )
             db.add(album)
             await db.flush()
+
+        aoty_cover = (
+            item.get("album_artwork_link")
+            or item.get("cover_url")
+            or item.get("cover")
+            or item.get("image")
+        )
+        if aoty_cover and aoty_cover.startswith("//"):
+            aoty_cover = "https:" + aoty_cover
+
+        await resolve_album_cover(db, album, aoty_cover_url=aoty_cover)
 
         link_res = await db.execute(
             select(UserAlbum).where(

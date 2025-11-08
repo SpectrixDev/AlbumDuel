@@ -55,6 +55,7 @@ class Album(Base):
     genres = Column(String, nullable=True)
     cover_url = Column(String, nullable=True)
     source = Column(String, nullable=True)
+    cover_provider = Column(String, nullable=True)
 
 
 class UserAlbum(Base):

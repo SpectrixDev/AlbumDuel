@@ -14,6 +14,7 @@ from .auth import router as auth_router
 from .imports import router as import_router
 from .spotify import router as spotify_auth_router, import_router as spotify_import_router, require_spotify_user
 from .aoty_router import router as aoty_import_router
+from .lastfm import router as lastfm_router, import_router as lastfm_import_router
 from .auth_status import router as auth_status_router
 
 
@@ -40,6 +41,8 @@ app.include_router(spotify_auth_router)
 app.include_router(spotify_import_router)
 app.include_router(auth_status_router)
 app.include_router(aoty_import_router)
+app.include_router(lastfm_router)
+app.include_router(lastfm_import_router)
 
 
 async def get_current_user_id(user = Depends(require_spotify_user)) -> int:
@@ -75,6 +78,8 @@ async def get_next_pair(db: AsyncSession = Depends(get_db), user_id: int = Depen
                 year=a.year,
                 cover_url=a.cover_url,
                 spotify_id=a.spotify_id,
+                source=a.source,
+                cover_provider=a.cover_provider,
                 elo=elo.elo if elo else 1500.0,
                 comparisons_count=elo.comparisons_count if elo else 0,
             )

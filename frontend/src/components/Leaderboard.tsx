@@ -41,19 +41,34 @@ export const Leaderboard: React.FC = () => {
             <th>Elo</th>
             <th>Rating /100</th>
             <th>Source</th>
+            <th>Artwork</th>
             <th>Comparisons</th>
           </tr>
         </thead>
         <tbody>
-          {items.map((item, idx) => (
-            <tr key={item.album.id}>
+          {items.map((item, idx) => {
+            const coverUrl = item.album.cover_url;
+            return (
+              <tr key={item.album.id}>
               <td>{idx + 1}</td>
               <td>{item.album.title}</td>
               <td>{item.album.artist}</td>
               <td>{item.elo.toFixed(0)}</td>
               <td>{item.rating_100.toFixed(1)}</td>
               <td className="source-cell">{item.album.source || (item.album.spotify_id ? 'Spotify' : 'AOTY')}</td>
+              <td className="source-cell">{item.album.cover_provider || (item.album.cover_url ? 'Imported' : 'Placeholder')}</td>
               <td>{item.comparisons_count}</td>
+              <td>
+                {coverUrl ? (
+                  <img
+                    src={coverUrl}
+                    alt={`${item.album.title} cover`}
+                    className="artwork-thumb"
+                  />
+                ) : (
+                  <div className="artwork-thumb" />
+                )}
+              </td>
               <td>
                 <button
                   type="button"
@@ -68,7 +83,8 @@ export const Leaderboard: React.FC = () => {
                 </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

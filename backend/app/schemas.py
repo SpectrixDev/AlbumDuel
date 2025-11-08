@@ -15,6 +15,8 @@ class AlbumBase(BaseModel):
     year: Optional[int] = None
     cover_url: Optional[str] = None
     spotify_id: Optional[str] = None
+    source: Optional[str] = None
+    cover_provider: Optional[str] = None
 
     class Config:
         from_attributes = True

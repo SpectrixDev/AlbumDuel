@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <radialGradient id="vinylGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" style="stop-color:#2a273f"/>
+      <stop offset="70%" style="stop-color:#232136"/>
+      <stop offset="100%" style="stop-color:#1a1a1a"/>
+    </radialGradient>
+    <radialGradient id="labelGradient" cx="0.5" cy="0.5" r="0.3">
+      <stop offset="0%" style="stop-color:#c4a7e7"/>
+      <stop offset="100%" style="stop-color:#908caa"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Outer vinyl record -->
+  <circle cx="16" cy="16" r="15" fill="url(#vinylGradient)" stroke="#393552" stroke-width="1"/>
+  
+  <!-- Inner label -->
+  <circle cx="16" cy="16" r="6" fill="url(#labelGradient)"/>
+  
+  <!-- Center hole -->
+  <circle cx="16" cy="16" r="1.5" fill="#000000"/>
+  
+  <!-- Grooves (concentric circles) -->
+  <circle cx="16" cy="16" r="8" fill="none" stroke="#393552" stroke-width="0.5" opacity="0.6"/>
+  <circle cx="16" cy="16" r="10" fill="none" stroke="#393552" stroke-width="0.5" opacity="0.6"/>
+  <circle cx="16" cy="16" r="12" fill="none" stroke="#393552" stroke-width="0.5" opacity="0.6"/>
+</svg>
