@@ -1,0 +1,1 @@
+Add user_album_exclusions table: id, user_id, album_id unique(user_id, album_id). Backend code updated to filter on this; ensure DB migrated accordingly.

@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./albumduel.db
+      - CORS_ORIGINS=*
+    ports:
+      - "8000:8000"
+  frontend:
+    build: ./frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    ports:
+      - "4173:4173"
