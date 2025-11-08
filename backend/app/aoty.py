@@ -45,6 +45,7 @@ async def import_aoty_user_albums(
         if not title or not artist:
             continue
 
+        # Try to find an existing album by exact match or by title/artist/year.
         res = await db.execute(
             select(Album).where(
                 Album.title.ilike(title),
@@ -52,8 +53,33 @@ async def import_aoty_user_albums(
             )
         )
         album = res.scalars().first()
+        if not album and year is not None:
+            res = await db.execute(
+                select(Album).where(
+                    Album.title.ilike(title),
+                    Album.artist.ilike(artist),
+                    Album.year == year,
+                )
+            )
+            album = res.scalars().first()
 
         if album and album.spotify_id:
+            link_res = await db.execute(
+                select(UserAlbum).where(
+                    UserAlbum.user_id == user.id,
+                    UserAlbum.album_id == album.id,
+                )
+            )
+            link = link_res.scalar_one_or_none()
+            if not link:
+                db.add(
+                    UserAlbum(
+                        user_id=user.id,
+                        album_id=album.id,
+                        added_from="aoty",
+                    )
+                )
+                imported += 1
             continue
 
         if not album:

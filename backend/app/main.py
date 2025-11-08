@@ -13,6 +13,17 @@ from .schemas import ComparePair, ComparePairAlbum, CompareSubmit, RankingsRespo
 from .auth import router as auth_router
 from .imports import router as import_router
 from .spotify import router as spotify_auth_router, import_router as spotify_import_router, require_spotify_user
+
+
+def choose_canonical_album(a: Album, b: Album) -> Album:
+    # Prefer album with spotify_id, else with any cover_url, else newer year, else higher id for stability.
+    if bool(a.spotify_id) != bool(b.spotify_id):
+        return a if a.spotify_id else b
+    if bool(a.cover_url) != bool(b.cover_url):
+        return a if a.cover_url else b
+    if (a.year or 0) != (b.year or 0):
+        return a if (a.year or 0) >= (b.year or 0) else b
+    return a if a.id >= b.id else b
 from .aoty_router import router as aoty_import_router
 from .lastfm import router as lastfm_router, import_router as lastfm_import_router
 from .auth_status import router as auth_status_router
@@ -165,25 +176,57 @@ async def exclude_album(payload: ExcludeAlbumRequest, db: AsyncSession = Depends
 
 @app.get("/rankings", response_model=RankingsResponse)
 async def get_rankings(db: AsyncSession = Depends(get_db), user_id: int = Depends(get_current_user_id)):
+    # Aggregate by logical album (title/artist/year), prefer canonical with artwork/source icon, merge Elo within group.
     res = await db.execute(
         select(Album, EloScore)
         .join(EloScore, (EloScore.album_id == Album.id) & (EloScore.user_id == user_id))
         .where(~Album.id.in_(
             select(UserAlbumExclusion.album_id).where(UserAlbumExclusion.user_id == user_id)
         ))
-        .order_by(EloScore.elo.desc())
     )
+    rows = [(album, elo) for album, elo in res.all()]
+
+    groups: dict[tuple[str, str], list[tuple[Album, EloScore]]] = {}
+    for album, elo in rows:
+        key = (album.title.strip().lower(), album.artist.strip().lower())
+        existing = groups.get(key)
+        if existing and any(a.id == album.id for a, _ in existing):
+            continue
+        groups.setdefault(key, []).append((album, elo))
+
     items: list[RankingEntry] = []
-    for album, elo in res.all():
-        rating = elo_to_100(elo.elo)
+
+    for key, entries in groups.items():
+        # Merge Elo within this logical album group.
+        total_weighted_elo = 0.0
+        total_weight = 0
+        total_comparisons = 0
+        canonical = None
+
+        for album, elo in entries:
+            weight = max(1, elo.comparisons_count)
+            total_weighted_elo += elo.elo * weight
+            total_weight += weight
+            total_comparisons += elo.comparisons_count
+
+            if canonical is None:
+                canonical = album
+            else:
+                canonical = choose_canonical_album(canonical, album)
+
+        merged_elo = total_weighted_elo / total_weight if total_weight > 0 else 1500.0
+        rating = elo_to_100(merged_elo)
+
         items.append(
             RankingEntry(
-                album=album,
-                elo=elo.elo,
+                album=canonical,
+                elo=merged_elo,
                 rating_100=rating,
-                comparisons_count=elo.comparisons_count,
+                comparisons_count=total_comparisons,
             )
         )
+
+    items.sort(key=lambda x: x.elo, reverse=True)
     return RankingsResponse(items=items)
 
 

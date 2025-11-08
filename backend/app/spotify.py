@@ -174,8 +174,19 @@ async def _upsert_album_from_spotify(db: AsyncSession, user: User, item: Dict[st
     if images:
         cover_url = images[0]["url"]
 
+    # Prefer existing album with this spotify_id, otherwise match by title/artist/year, otherwise create.
     res = await db.execute(select(Album).where(Album.spotify_id == spotify_id))
     existing = res.scalar_one_or_none()
+    if not existing:
+        q = select(Album).where(
+            Album.title.ilike(title),
+            Album.artist.ilike(artist),
+        )
+        if year is not None:
+            q = q.where(Album.year == year)
+        res = await db.execute(q)
+        existing = res.scalars().first()
+
     if not existing:
         existing = Album(
             spotify_id=spotify_id,
@@ -188,6 +199,12 @@ async def _upsert_album_from_spotify(db: AsyncSession, user: User, item: Dict[st
         )
         db.add(existing)
         await db.flush()
+    else:
+        if not existing.spotify_id:
+            existing.spotify_id = spotify_id
+        if cover_url and not existing.cover_url:
+            existing.cover_url = cover_url
+            existing.cover_provider = "spotify"
 
     link_res = await db.execute(
         select(UserAlbum).where(UserAlbum.user_id == user.id, UserAlbum.album_id == existing.id)

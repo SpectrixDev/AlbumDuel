@@ -43,46 +43,48 @@ export const Leaderboard: React.FC = () => {
             <th>Source</th>
             <th>Artwork</th>
             <th>Comparisons</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {items.map((item, idx) => {
             const coverUrl = item.album.cover_url;
+            const sourceLabel = item.album.source || (item.album.spotify_id ? 'spotify' : 'aoty');
+            const artworkLabel = item.album.cover_provider || (item.album.cover_url ? 'Imported' : 'Placeholder');
             return (
               <tr key={item.album.id}>
-              <td>{idx + 1}</td>
-              <td>{item.album.title}</td>
-              <td>{item.album.artist}</td>
-              <td>{item.elo.toFixed(0)}</td>
-              <td>{item.rating_100.toFixed(1)}</td>
-              <td className="source-cell">{item.album.source || (item.album.spotify_id ? 'Spotify' : 'AOTY')}</td>
-              <td className="source-cell">{item.album.cover_provider || (item.album.cover_url ? 'Imported' : 'Placeholder')}</td>
-              <td>{item.comparisons_count}</td>
-              <td>
-                {coverUrl ? (
-                  <img
-                    src={coverUrl}
-                    alt={`${item.album.title} cover`}
-                    className="artwork-thumb"
-                  />
-                ) : (
-                  <div className="artwork-thumb" />
-                )}
-              </td>
-              <td>
-                <button
-                  type="button"
-                  className="exclude-button"
-                  onClick={() =>
-                    api.post('/albums/exclude', { album_id: item.album.id }).then(() =>
-                      setItems((prev) => prev.filter((x) => x.album.id !== item.album.id)),
-                    )
-                  }
-                >
-                  Exclude
-                </button>
-              </td>
-            </tr>
+                <td>{idx + 1}</td>
+                <td>{item.album.title}</td>
+                <td>{item.album.artist}</td>
+                <td>{item.elo.toFixed(0)}</td>
+                <td>{item.rating_100.toFixed(1)}</td>
+                <td className="source-cell">{sourceLabel}</td>
+                <td>
+                  {coverUrl ? (
+                    <img
+                      src={coverUrl}
+                      alt={`${item.album.title} cover`}
+                      className="artwork-thumb"
+                    />
+                  ) : (
+                    <div className="artwork-thumb" />
+                  )}
+                </td>
+                <td>{item.comparisons_count}</td>
+                <td>
+                  <button
+                    type="button"
+                    className="exclude-button"
+                    onClick={() =>
+                      api.post('/albums/exclude', { album_id: item.album.id }).then(() =>
+                        setItems((prev) => prev.filter((x) => x.album.id !== item.album.id)),
+                      )
+                    }
+                  >
+                    Exclude
+                  </button>
+                </td>
+              </tr>
             );
           })}
         </tbody>
