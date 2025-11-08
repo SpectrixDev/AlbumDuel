@@ -15,11 +15,13 @@ AlbumDuel is a web app for ranking albums via head-to-head duels, aggregating da
   - Optional scrobble-based imports (when configured).
 - Smart deduplication:
   - Backend merges albums by logical identity so AOTY + Spotify versions of the same album are treated as one.
-  - Elo and comparisons are combined.
+  - Elo and comparisons are combined and leaderboard groups duplicates into a single canonical row.
 - Elo-based duels:
   - /compare/next surfaces album pairs.
   - /compare/submit updates per-user Elo.
   - Leaderboard shows ranked albums with covers and exclude controls.
+- Stats page:
+  - Shows total albums, total duels, and average duels per album with a styled card layout and progress bars toward configurable milestones.
 
 ## Tech Stack
 
@@ -59,8 +61,3 @@ From the repo root:
 
 This starts the backend on `:8000` (Poetry + Uvicorn) and the frontend dev server.
 
-## Security Notes
-
-- Real secrets must live only in `backend/.env` or environment variables.
-- `backend/.env.example` only contains placeholders and is safe to commit.
-- Ensure `backend/.env`, `backend/.venv`, `frontend/node_modules`, and `frontend/dist` remain untracked before pushing public.

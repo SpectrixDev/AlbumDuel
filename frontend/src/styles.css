@@ -223,6 +223,73 @@ main {
 
 .stats p { font-size: 14px; color: var(--text-muted); }
 
+.stats {
+  margin-top: 18px;
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  background: radial-gradient(120% 160% at 0% 0%, rgba(196, 167, 231, 0.05), transparent),
+              rgba(15, 13, 26, 0.98);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.stat-card {
+  padding: 10px 10px 8px;
+  border-radius: 10px;
+  background: rgba(22, 20, 35, 0.98);
+  border: 1px solid rgba(144, 140, 170, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-card.primary {
+  background: radial-gradient(140% 180% at 0% 0%, rgba(196, 167, 231, 0.12), transparent),
+              rgba(18, 15, 30, 0.98);
+  border-color: rgba(196, 167, 231, 0.4);
+}
+
+.stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.stat-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.stat-bar-wrapper {
+  margin-top: 4px;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(57, 53, 82, 0.96);
+  overflow: hidden;
+}
+
+.stat-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #c4a7e7, #8bd5ca);
+  transition: width 0.4s ease;
+}
+
 .connect-spotify {
   padding: 5px 12px;
   border-radius: 999px;
