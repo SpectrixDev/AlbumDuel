@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../api';
+import { getAlbumCoverUrl } from '../coverUtils';
 
 interface RankingEntry {
   album: {
@@ -48,7 +49,7 @@ export const Leaderboard: React.FC = () => {
         </thead>
         <tbody>
           {items.map((item, idx) => {
-            const coverUrl = item.album.cover_url;
+            const coverUrl = getAlbumCoverUrl(item.album);
             const sourceLabel = item.album.source || (item.album.spotify_id ? 'spotify' : 'aoty');
             const artworkLabel = item.album.cover_provider || (item.album.cover_url ? 'Imported' : 'Placeholder');
             return (
@@ -60,15 +61,11 @@ export const Leaderboard: React.FC = () => {
                 <td>{item.rating_100.toFixed(1)}</td>
                 <td className="source-cell">{sourceLabel}</td>
                 <td>
-                  {coverUrl ? (
-                    <img
-                      src={coverUrl}
-                      alt={`${item.album.title} cover`}
-                      className="artwork-thumb"
-                    />
-                  ) : (
-                    <div className="artwork-thumb" />
-                  )}
+                  <img
+                    src={coverUrl}
+                    alt={`${item.album.title} cover`}
+                    className="artwork-thumb"
+                  />
                 </td>
                 <td>{item.comparisons_count}</td>
                 <td>

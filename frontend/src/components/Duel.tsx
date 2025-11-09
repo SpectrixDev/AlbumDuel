@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../api';
+import { getAlbumCoverUrl } from '../coverUtils';
 
 interface Album {
   id: number;
@@ -8,6 +9,7 @@ interface Album {
   year?: number;
   cover_url?: string;
   spotify_id?: string;
+  source?: string;
   elo: number;
   comparisons_count: number;
 }
@@ -89,13 +91,19 @@ export const Duel: React.FC = () => {
           </button>
         </div>
         <img
-          src={pair.album_a.cover_url || 'https://placehold.co/300x300/15131f/c4a7e7?text=AOTY+%E2%80%A2+No+Cover'}
+          src={getAlbumCoverUrl(pair.album_a)}
           alt={pair.album_a.title}
           loading="lazy"
         />
         <h2>{pair.album_a.title}</h2>
         <p>{pair.album_a.artist}</p>
         {pair.album_a.year && <p>{pair.album_a.year}</p>}
+        <div className="album-badges">
+          <span className="badge badge-source">
+            {pair.album_a.source || (pair.album_a.spotify_id ? 'spotify' : 'aoty')}
+          </span>
+          <span className="badge badge-elo">Elo {pair.album_a.elo.toFixed(0)}</span>
+        </div>
       </div>
       <div className="vs">vs</div>
       <div className="album" onClick={() => submit(pair.album_b.id)}>
@@ -122,13 +130,19 @@ export const Duel: React.FC = () => {
           </button>
         </div>
         <img
-          src={pair.album_b.cover_url || 'https://placehold.co/300x300/15131f/c4a7e7?text=AOTY+%E2%80%A2+No+Cover'}
+          src={getAlbumCoverUrl(pair.album_b)}
           alt={pair.album_b.title}
           loading="lazy"
         />
         <h2>{pair.album_b.title}</h2>
         <p>{pair.album_b.artist}</p>
         {pair.album_b.year && <p>{pair.album_b.year}</p>}
+        <div className="album-badges">
+          <span className="badge badge-source">
+            {pair.album_b.source || (pair.album_b.spotify_id ? 'spotify' : 'aoty')}
+          </span>
+          <span className="badge badge-elo">Elo {pair.album_b.elo.toFixed(0)}</span>
+        </div>
       </div>
       <div className="controls">
         <button onClick={() => submit(null)}>Skip (Space)</button>
